@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Intelligence Assistant | University RAG</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- TOP HEADER -->
+        <header class="app-header">
+            <div class="header-brand">
+                <div class="brand-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
+                        <path d="M6 6h10"/>
+                        <path d="M6 10h10"/>
+                        <path d="M6 14h6"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h1>Exam Intelligence Assistant</h1>
+                    <span class="brand-tagline">University Question Papers RAG</span>
+                </div>
+            </div>
+
+            <!-- Dynamic Backend Health Indicator -->
+            <div class="status-badge" id="health-status">
+                <span class="status-dot"></span>
+                <span class="status-text">Connecting...</span>
+            </div>
+        </header>
+
+        <!-- MAIN CHAT CONTAINER -->
+        <main class="chat-container">
+            <!-- Message Feed -->
+            <div class="chat-feed" id="chat-feed">
+                <!-- Welcome Banner -->
+                <div class="welcome-card" id="welcome-card">
+                    <div class="welcome-icon">🎓</div>
+                    <h2>Welcome to Exam Question AI</h2>
+                    <p>Ask anything about past university question papers, marks distribution, repeated questions, topics, or specific subjects.</p>
+                    
+                    <div class="suggestions-label">Try asking:</div>
+                    <div class="suggestions-grid">
+                        <button class="suggestion-chip" data-query="Which questions are repeated frequently in Data Structures?">
+                            💡 Repeated questions in Data Structures
+                        </button>
+                        <button class="suggestion-chip" data-query="What are the 10-mark questions from 2022 BCA CC11?">
+                            📄 10-mark questions in BCA CC11
+                        </button>
+                        <button class="suggestion-chip" data-query="Explain the questions asked on Database Normalization.">
+                            🔍 Normalization questions across years
+                        </button>
+                        <button class="suggestion-chip" data-query="Show me all questions on Binary Search Tree.">
+                            🌲 Binary Search Tree questions
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input Area (Fixed Bottom) -->
+            <footer class="chat-input-wrapper">
+                <form class="input-form" id="chat-form" onsubmit="return false;">
+                    <textarea 
+                        id="chat-input" 
+                        class="chat-input" 
+                        placeholder="Ask a question about exam papers, topics, or marks..." 
+                        rows="1"
+                        autocomplete="off"
+                    ></textarea>
+                    <button type="submit" class="btn-send" id="send-btn" title="Send Question" aria-label="Send">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </form>
+                <div class="input-footer">
+                    <span>Press <kbd>Enter</kbd> to send, <kbd>Shift + Enter</kbd> for new line</span>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <!-- MARKED.JS FOR MARKDOWN RENDERING -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
