@@ -9,7 +9,8 @@ from google import genai
 import os
 import asyncio
 import time
-client = genai.Client(api_key=os.getenv("GEMINIAPI_KEY"))
+api_key = os.getenv("GEMINIAPI_KEY") or os.getenv("GOOGLE_API_KEY")
+client = genai.Client(api_key=api_key)
 model_name = "gemini-3.5-flash-lite"
 previous_id = None
 
@@ -53,6 +54,48 @@ async def generate_answer(query, relevant_chunks):
             previous_id = response2.id
             print("response2 : \n", response2.output_text)
             return response2.output_text
+
+# Streaming generator for token-by-token streaming
+async def generate_answer_stream(query, relevant_chunks):
+    global previous_id
+    global model_name
+    systemInstruction = SYSTEM_PROMPT_2_0
+    prompt = prompt_template(query, relevant_chunks)
+    print(f"Prompt (Stream):\n {prompt}")
+
+    call_kwargs = {
+        "model": model_name,
+        "input": prompt,
+        "generation_config": {"temperature": 0.6},
+        "system_instruction": systemInstruction,
+        "stream": True,
+    }
+    if previous_id is not None:
+        call_kwargs["previous_interaction_id"] = previous_id
+
+    try:
+        stream = await client.aio.interactions.create(**call_kwargs)
+        async for event in stream:
+            event_type = getattr(event, "event_type", None)
+            if event_type == "step.delta":
+                delta = getattr(event, "delta", None)
+                text = getattr(delta, "text", None)
+                if text:
+                    yield text
+            elif event_type in ("interaction.created", "interaction.completed"):
+                interaction = getattr(event, "interaction", None)
+                if interaction and hasattr(interaction, "id") and interaction.id:
+                    previous_id = interaction.id
+    except Exception as stream_err:
+        print(f"Streaming exception: {stream_err}. Falling back to standard generation...")
+        try:
+            call_kwargs.pop("stream", None)
+            resp = await client.aio.interactions.create(**call_kwargs)
+            if hasattr(resp, "id") and resp.id:
+                previous_id = resp.id
+            yield getattr(resp, "output_text", str(resp))
+        except Exception as fallback_err:
+            yield f"Error: {fallback_err}"
 
 
 
@@ -120,7 +163,34 @@ async def llm_answer(question):
         "sources": source_files
     }
 
+async def llm_answer_stream(question):
+    retrieved = answer_query(question)
+
+    if not retrieved:
+        context = "No specific previous year questions found in database."
+        sources = []
+    else:
+        structured_chunks = structure_retrieved_chunks(retrieved)
+        context = structured_chunks["context"]
+        sources = structured_chunks.get("sources", [])
+
+    source_files = []
+    seen = set()
+    for s in sources:
+        raw_name = s.get("source_filename")
+        if raw_name:
+            clean_name = os.path.basename(str(raw_name).replace("\\", "/"))
+            if clean_name and clean_name not in seen:
+                seen.add(clean_name)
+                source_files.append(clean_name)
+
+    return {
+        "stream": generate_answer_stream(question, context),
+        "sources": source_files
+    }
+
 if __name__ == "__main__":
     question = input("User: ")
     asyncio.run(llm_answer(question))
+
 

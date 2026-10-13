@@ -180,6 +180,65 @@ function renderResponse(raw) {
     return html;
 }
 
+function finalizeAiMessage(contentEl, content, sources = []) {
+    // Parse answer to check if any previous-year question chunks were returned
+    const { questions } = parseAnswerAndQuestions(content);
+    const hasChunks = Array.isArray(questions) && questions.length > 0;
+    const renderedHtml = renderResponse(content);
+
+    let sourcesHtml = "";
+    // Only show source files if chunks were returned in the answer and sources exist
+    if (hasChunks && Array.isArray(sources) && sources.length > 0) {
+        const pills = sources.map(src => `<span class="source-file-pill" title="${src}">${src}</span>`).join("");
+        sourcesHtml = `
+            <div class="message-sources-bar">
+                <div class="sources-label">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                    <span>Sources:</span>
+                </div>
+                <div class="sources-tags">
+                    ${pills}
+                </div>
+            </div>
+        `;
+    }
+
+    contentEl.innerHTML = `
+        <div class="message-meta-bar">
+            <span class="ai-source-label">Exam Assistant</span>
+            <button type="button" class="btn-copy" title="Copy answer" aria-label="Copy answer">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copy</span>
+            </button>
+        </div>
+        <div class="message-body">${renderedHtml}</div>
+        ${sourcesHtml}
+    `;
+
+    // Attach Copy Event Handler
+    const copyBtn = contentEl.querySelector(".btn-copy");
+    if (copyBtn) {
+        copyBtn.addEventListener("click", () => {
+            navigator.clipboard.writeText(content).then(() => {
+                const span = copyBtn.querySelector("span");
+                const prev = span.textContent;
+                span.textContent = "Copied!";
+                copyBtn.classList.add("copied");
+                setTimeout(() => {
+                    span.textContent = prev;
+                    copyBtn.classList.remove("copied");
+                }, 2000);
+            });
+        });
+    }
+}
+
 function appendMessage(sender, content, isMarkdown = false, sources = []) {
     if (!chatFeed) return;
 
@@ -194,62 +253,7 @@ function appendMessage(sender, content, isMarkdown = false, sources = []) {
     contentEl.className = "message-content";
 
     if (sender === "ai" && isMarkdown) {
-        // Parse answer to check if any previous-year question chunks were returned
-        const { questions } = parseAnswerAndQuestions(content);
-        const hasChunks = Array.isArray(questions) && questions.length > 0;
-        const renderedHtml = renderResponse(content);
-
-        let sourcesHtml = "";
-        // Only show source files if chunks were returned in the answer and sources exist
-        if (hasChunks && Array.isArray(sources) && sources.length > 0) {
-            const pills = sources.map(src => `<span class="source-file-pill" title="${src}">${src}</span>`).join("");
-            sourcesHtml = `
-                <div class="message-sources-bar">
-                    <div class="sources-label">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                        </svg>
-                        <span>Sources:</span>
-                    </div>
-                    <div class="sources-tags">
-                        ${pills}
-                    </div>
-                </div>
-            `;
-        }
-
-        contentEl.innerHTML = `
-            <div class="message-meta-bar">
-                <span class="ai-source-label">Exam Assistant</span>
-                <button type="button" class="btn-copy" title="Copy answer" aria-label="Copy answer">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                    </svg>
-                    <span>Copy</span>
-                </button>
-            </div>
-            <div class="message-body">${renderedHtml}</div>
-            ${sourcesHtml}
-        `;
-
-        // Attach Copy Event Handler
-        const copyBtn = contentEl.querySelector(".btn-copy");
-        if (copyBtn) {
-            copyBtn.addEventListener("click", () => {
-                navigator.clipboard.writeText(content).then(() => {
-                    const span = copyBtn.querySelector("span");
-                    const prev = span.textContent;
-                    span.textContent = "Copied!";
-                    copyBtn.classList.add("copied");
-                    setTimeout(() => {
-                        span.textContent = prev;
-                        copyBtn.classList.remove("copied");
-                    }, 2000);
-                });
-            });
-        }
+        finalizeAiMessage(contentEl, content, sources);
     } else if (isMarkdown) {
         contentEl.innerHTML = renderResponse(content);
     } else {
@@ -264,7 +268,7 @@ function appendMessage(sender, content, isMarkdown = false, sources = []) {
 }
 
 // ==========================================================================
-// 3. QUERY SUBMISSION
+// 3. QUERY SUBMISSION (WITH REAL-TIME TOKEN STREAMING)
 // ==========================================================================
 async function submitQuery(queryText) {
     const query = (queryText || chatInput.value).trim();
@@ -291,24 +295,108 @@ async function submitQuery(queryText) {
     chatFeed.appendChild(typingEl);
     chatFeed.scrollTop = chatFeed.scrollHeight;
 
+    let aiMessageEl = null;
+    let contentEl = null;
+    let bodyEl = null;
+    let accumulatedText = "";
+    let streamSources = [];
+
+    function initStreamBubble() {
+        document.getElementById(typingId)?.remove();
+
+        aiMessageEl = document.createElement("div");
+        aiMessageEl.className = "message message-ai";
+
+        contentEl = document.createElement("div");
+        contentEl.className = "message-content";
+        contentEl.innerHTML = `
+            <div class="message-meta-bar">
+                <span class="ai-source-label">Exam Assistant</span>
+            </div>
+            <div class="message-body"></div>
+        `;
+
+        bodyEl = contentEl.querySelector(".message-body");
+        aiMessageEl.appendChild(contentEl);
+        chatFeed.appendChild(aiMessageEl);
+        chatFeed.scrollTop = chatFeed.scrollHeight;
+    }
+
     try {
-        const response = await fetch(`${API_BASE_URL}/query?query=${encodeURIComponent(query)}`, {
-            method: "POST"
-        });
+        const streamUrl = `${API_BASE_URL}/query-stream?query=${encodeURIComponent(query)}`;
+        const response = await fetch(streamUrl, { method: "POST" });
 
-        const data = await response.json();
-        document.getElementById(typingId)?.remove();
-
-        if (response.ok && data.answer) {
-            appendMessage("ai", data.answer, true, data.sources || []);
-        } else {
-            const errorMsg = data.detail || "Unable to get an answer from the database.";
-            appendMessage("ai", `❌ **Error**: ${errorMsg}`, true);
+        if (!response.ok) {
+            throw new Error(`Stream HTTP ${response.status}`);
         }
-    } catch (error) {
-        document.getElementById(typingId)?.remove();
-        console.error("Query API Error:", error);
-        appendMessage("ai", `❌ **Connection Error**: Could not connect to the backend server (${API_BASE_URL}). Make sure it is running.`, true);
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder("utf-8");
+        let buffer = "";
+
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const blocks = buffer.split("\n\n");
+            buffer = blocks.pop() || "";
+
+            for (const block of blocks) {
+                const line = block.trim();
+                if (!line.startsWith("data:")) continue;
+                const jsonStr = line.slice(5).trim();
+                if (!jsonStr) continue;
+
+                try {
+                    const data = JSON.parse(jsonStr);
+                    if (data.type === "sources") {
+                        streamSources = data.sources || [];
+                    } else if (data.type === "token") {
+                        if (!aiMessageEl) initStreamBubble();
+                        accumulatedText += data.token;
+                        if (bodyEl) {
+                            bodyEl.innerHTML = renderResponse(accumulatedText);
+                            chatFeed.scrollTop = chatFeed.scrollHeight;
+                        }
+                    } else if (data.type === "done") {
+                        // Stream done
+                    }
+                } catch (jsonErr) {
+                    console.warn("SSE json parse error:", jsonErr);
+                }
+            }
+        }
+
+        // Finalize editorial card & sources when streaming completes
+        if (aiMessageEl && contentEl) {
+            finalizeAiMessage(contentEl, accumulatedText, streamSources);
+            chatFeed.scrollTop = chatFeed.scrollHeight;
+        } else {
+            document.getElementById(typingId)?.remove();
+            appendMessage("ai", accumulatedText || "No answer generated.", true, streamSources);
+        }
+
+    } catch (streamErr) {
+        console.warn("Streaming unavailable, falling back to legacy query:", streamErr);
+        try {
+            const fallbackRes = await fetch(`${API_BASE_URL}/query?query=${encodeURIComponent(query)}`, {
+                method: "POST"
+            });
+            const data = await fallbackRes.json();
+            document.getElementById(typingId)?.remove();
+
+            if (fallbackRes.ok && data.answer) {
+                appendMessage("ai", data.answer, true, data.sources || []);
+            } else {
+                const errorMsg = data.detail || "Unable to get an answer from the database.";
+                appendMessage("ai", `❌ **Error**: ${errorMsg}`, true);
+            }
+        } catch (error) {
+            document.getElementById(typingId)?.remove();
+            console.error("Query API Error:", error);
+            appendMessage("ai", `❌ **Connection Error**: Could not connect to the backend server (${API_BASE_URL}).`, true);
+        }
     } finally {
         sendBtn.disabled = false;
         chatInput.focus();
@@ -354,6 +442,6 @@ document.addEventListener("click", (e) => {
 // ==========================================================================
 document.addEventListener("DOMContentLoaded", () => {
     checkBackendHealth();
-    setInterval(checkBackendHealth, 9 * 60 * 1000);
+    setInterval(checkBackendHealth, 12 * 60 * 1000);
     chatInput.focus();
 });

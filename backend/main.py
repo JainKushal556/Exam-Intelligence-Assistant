@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 load_dotenv()
 from fastapi import FastAPI , HTTPException , status
+from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import UploadFile, File
 from pathlib import Path
@@ -9,8 +10,9 @@ from datetime import datetime
 import shutil
 import os
 import time
+import json
 
-from Query_Pipeline.llm import llm_answer
+from Query_Pipeline.llm import llm_answer, llm_answer_stream
 
 
 
@@ -146,6 +148,43 @@ async def user_query(query : str):
         "sources": sources,
         "time_taken": elapsed_time,
     }
+
+@app.post("/query-stream")
+@app.get("/query-stream")
+async def user_query_stream(query: str):
+    if not query or not isinstance(query, str) or not query.strip():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Query cannot be empty! Please provide a valid question."
+        )
+    start_time = time.time()
+    
+    result = await llm_answer_stream(query)
+    stream_gen = result["stream"]
+    sources = result.get("sources", [])
+
+    async def event_generator():
+        # 1. First event: send sources metadata
+        yield f"data: {json.dumps({'type': 'sources', 'sources': sources})}\n\n"
+        
+        # 2. Token-by-token text streaming
+        async for token in stream_gen:
+            if token:
+                yield f"data: {json.dumps({'type': 'token', 'token': token})}\n\n"
+
+        # 3. Final event: done marker with execution time
+        elapsed_time = round(time.time() - start_time, 2)
+        yield f"data: {json.dumps({'type': 'done', 'time_taken': elapsed_time})}\n\n"
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        }
+    )
 
 @app.get("/health")
 def health_check():
