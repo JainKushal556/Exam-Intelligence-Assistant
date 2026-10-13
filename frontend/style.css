@@ -275,6 +275,7 @@ html, body {
 .message {
     display: flex;
     width: 100%;
+    min-width: 0;
     animation: slideUpFade 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -298,11 +299,14 @@ html, body {
     font-weight: 500;
     line-height: 1.55;
     box-shadow: 0 4px 14px rgba(28, 25, 23, 0.25);
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 /* AI Message Container (Editorial Academic Layout) */
 .message-ai {
     justify-content: flex-start;
+    min-width: 0;
 }
 
 .message-ai .message-content {
@@ -312,10 +316,14 @@ html, body {
     border-radius: var(--radius-lg);
     padding: 24px 28px;
     max-width: 95%;
+    width: 100%;
+    min-width: 0;
     font-size: 0.95rem;
     line-height: 1.72;
     box-shadow: var(--shadow-md);
     position: relative;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 /* AI Message Top Meta Bar */
@@ -478,7 +486,10 @@ html, body {
     margin: 16px 0;
     font-size: 0.9rem;
     border-radius: var(--radius-md);
-    overflow: hidden;
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     box-shadow: var(--shadow-sm);
 }
 
@@ -851,32 +862,417 @@ html, body {
 }
 
 /* ==========================================================================
-   8. RESPONSIVE DESIGN
+   8. RESPONSIVE DESIGN FOR TABLETS & PHONES
    ========================================================================== */
-@media (max-width: 640px) {
+
+/* Tablets & Medium Screens */
+@media (max-width: 768px) {
     .app-header {
-        padding: 0 16px;
+        padding: 0 18px;
+    }
+    .chat-container {
+        max-width: 100%;
     }
     .chat-feed {
-        padding: 16px 14px 24px;
+        padding: 20px 18px 24px;
+        gap: 18px;
     }
     .chat-input-wrapper {
-        padding: 10px 14px 16px;
-    }
-    .welcome-card {
-        padding: 24px 16px;
-    }
-    .suggestions-grid {
-        grid-template-columns: 1fr;
-    }
-    .message-user .message-content {
-        max-width: 88%;
+        padding: 10px 18px 18px;
     }
     .message-ai .message-content {
-        max-width: 96%;
-        padding: 16px 18px;
+        max-width: 98%;
+        padding: 20px 22px;
     }
+    .message-user .message-content {
+        max-width: 85%;
+    }
+}
+
+/* Mobile Phones (Standard & Compact) */
+@media (max-width: 640px) {
+    /* Layout & Viewport */
+    .app-layout {
+        height: 100dvh;
+        width: 100vw;
+        overflow: hidden;
+    }
+
+    .app-header {
+        height: 56px;
+        padding: 0 12px;
+    }
+
+    .header-brand {
+        gap: 8px;
+        min-width: 0;
+    }
+
+    .brand-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        flex-shrink: 0;
+    }
+
+    .brand-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .brand-text {
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    .brand-text h1 {
+        font-size: 0.88rem;
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .brand-tagline {
+        font-size: 0.68rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .status-badge {
+        padding: 4px 9px;
+        font-size: 0.72rem;
+        flex-shrink: 0;
+        gap: 6px;
+    }
+
+    .status-dot {
+        width: 7px;
+        height: 7px;
+    }
+
+    /* Main Container & Message Feed */
+    .chat-container {
+        height: calc(100dvh - 56px);
+        width: 100%;
+    }
+
+    .chat-feed {
+        padding: 14px 10px 18px;
+        gap: 14px;
+    }
+
+    /* Welcome Card */
+    .welcome-card {
+        padding: 22px 14px;
+        border-radius: 14px;
+        margin: 8px 0;
+    }
+
+    .welcome-icon {
+        font-size: 2.2rem;
+        margin-bottom: 8px;
+    }
+
+    .welcome-card h2 {
+        font-size: 1.18rem;
+        margin-bottom: 6px;
+    }
+
+    .welcome-card p {
+        font-size: 0.84rem;
+        line-height: 1.5;
+        margin-bottom: 16px;
+    }
+
+    .suggestions-label {
+        font-size: 0.72rem;
+        margin-bottom: 10px;
+    }
+
+    .suggestions-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .suggestion-chip {
+        padding: 9px 12px;
+        font-size: 0.81rem;
+        border-radius: 8px;
+    }
+
+    /* User Message */
+    .message-user .message-content {
+        max-width: 88%;
+        padding: 10px 14px;
+        font-size: 0.90rem;
+        line-height: 1.45;
+        border-radius: 14px 14px 3px 14px;
+    }
+
+    /* AI Message Container */
+    .message-ai {
+        width: 100%;
+    }
+
+    .message-ai .message-content {
+        max-width: 100%;
+        width: 100%;
+        padding: 15px 14px;
+        border-radius: 14px;
+        font-size: 0.91rem;
+        line-height: 1.62;
+        box-shadow: var(--shadow-sm);
+    }
+
+    /* AI Message Header / Meta Bar */
+    .message-meta-bar {
+        padding-bottom: 10px;
+        margin-bottom: 12px;
+    }
+
+    .ai-source-label {
+        font-size: 0.68rem;
+        padding: 2px 8px;
+        gap: 4px;
+    }
+
+    .btn-copy {
+        padding: 3px 8px;
+        font-size: 0.70rem;
+        gap: 4px;
+    }
+
+    /* Typography inside AI Message Body */
+    .message-body h1 {
+        font-size: 1.15rem;
+        margin: 14px 0 8px;
+        padding-bottom: 4px;
+    }
+
+    .message-body h2 {
+        font-size: 1.02rem;
+        margin: 14px 0 6px;
+    }
+
+    .message-body h3 {
+        font-size: 0.94rem;
+        margin: 12px 0 6px;
+    }
+
+    .message-body p {
+        font-size: 0.90rem;
+        line-height: 1.62;
+        margin-bottom: 10px;
+    }
+
+    .message-body ul,
+    .message-body ol {
+        margin: 8px 0 12px 18px;
+    }
+
+    .message-body li {
+        font-size: 0.90rem;
+        line-height: 1.55;
+        margin-bottom: 5px;
+    }
+
+    .message-body pre {
+        padding: 10px 12px;
+        font-size: 0.78rem;
+        border-radius: 8px;
+        margin: 10px 0;
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .message-body code {
+        font-size: 0.84em;
+        padding: 1px 5px;
+    }
+
+    .message-body blockquote {
+        padding: 10px 12px;
+        font-size: 0.86rem;
+        margin: 10px 0;
+    }
+
+    .message-body table {
+        font-size: 0.80rem;
+        margin: 12px 0;
+    }
+
+    .message-body th,
+    .message-body td {
+        padding: 7px 10px;
+    }
+
+    /* Past Exam Questions Archive */
+    .pyq-editorial-block {
+        margin-top: 18px;
+        padding-top: 14px;
+    }
+
+    .pyq-ref-header {
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .pyq-ref-title-group {
+        gap: 6px;
+    }
+
+    .pyq-ref-heading {
+        font-size: 0.86rem;
+    }
+
+    .pyq-ref-badge {
+        font-size: 0.64rem;
+        padding: 2px 6px;
+    }
+
+    .pyq-ref-count {
+        font-size: 0.70rem;
+    }
+
+    .pyq-ref-list {
+        border-radius: 10px;
+    }
+
+    .pyq-ref-item {
+        padding: 10px 11px;
+        gap: 10px;
+    }
+
+    .pyq-ref-num {
+        font-size: 0.68rem;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-top: 1px;
+    }
+
+    .pyq-ref-question {
+        font-size: 0.86rem;
+        line-height: 1.45;
+        margin-bottom: 6px !important;
+    }
+
+    .pyq-ref-meta {
+        gap: 4px 6px;
+        font-size: 0.70rem;
+    }
+
+    .pyq-ref-meta .meta-tag {
+        font-size: 0.66rem;
+        padding: 2px 6px;
+    }
+
+    /* Hide bullet dots on mobile so tag pills wrap naturally */
+    .pyq-ref-meta .meta-dot {
+        display: none;
+    }
+
+    .pyq-note-block {
+        padding: 8px 10px;
+        font-size: 0.78rem;
+        margin-top: 10px;
+    }
+
+    /* Sources Attribution Bar */
+    .message-sources-bar {
+        margin-top: 14px;
+        padding-top: 10px;
+        gap: 6px;
+    }
+
+    .sources-label {
+        font-size: 0.66rem;
+    }
+
+    .sources-tags {
+        gap: 5px;
+        width: 100%;
+    }
+
+    .source-file-pill {
+        max-width: 100%;
+        font-size: 0.68rem;
+        padding: 2px 6px;
+    }
+
+    /* Chat Input Area (Fixed Bottom) */
+    .chat-input-wrapper {
+        padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
+        background: linear-gradient(to top, var(--bg-main) 88%, transparent);
+    }
+
+    .input-form {
+        padding: 6px 8px 6px 14px;
+        gap: 8px;
+        border-radius: 20px;
+        box-shadow: var(--shadow-md);
+    }
+
+    /* 16px font-size prevents unwanted iOS Safari zoom */
+    .chat-input {
+        font-size: 16px !important;
+        line-height: 1.4;
+        padding: 6px 0;
+        max-height: 100px;
+    }
+
+    .btn-send {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+    }
+
+    .btn-send svg {
+        width: 16px;
+        height: 16px;
+    }
+
     .input-footer {
         display: none;
+    }
+}
+
+/* Extra Small Phones (width <= 380px) */
+@media (max-width: 380px) {
+    .app-header {
+        padding: 0 8px;
+    }
+
+    .brand-tagline {
+        display: none;
+    }
+
+    .brand-text h1 {
+        font-size: 0.82rem;
+    }
+
+    .status-badge {
+        padding: 3px 7px;
+        font-size: 0.68rem;
+    }
+
+    .chat-feed {
+        padding: 10px 8px 14px;
+    }
+
+    .message-ai .message-content {
+        padding: 12px 10px;
+    }
+
+    .pyq-ref-item {
+        padding: 8px 9px;
+        gap: 8px;
+    }
+
+    .chat-input-wrapper {
+        padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
     }
 }

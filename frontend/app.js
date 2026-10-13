@@ -354,6 +354,6 @@ document.addEventListener("click", (e) => {
 // ==========================================================================
 document.addEventListener("DOMContentLoaded", () => {
     checkBackendHealth();
-    setInterval(checkBackendHealth, 15000);
+    setInterval(checkBackendHealth, 9 * 60 * 1000);
     chatInput.focus();
 });
