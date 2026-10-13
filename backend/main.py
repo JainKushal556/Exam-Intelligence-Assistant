@@ -164,15 +164,20 @@ async def user_query_stream(query: str):
     sources = result.get("sources", [])
 
     async def event_generator():
-        # 1. First event: send sources metadata
+        # 1. Send 2KB whitespace comment to immediately unbuffer proxies (Render/Cloudflare/Nginx)
+        yield f": {' ' * 2048}\n\n"
+
+        # 2. First event: send sources metadata
         yield f"data: {json.dumps({'type': 'sources', 'sources': sources})}\n\n"
         
-        # 2. Token-by-token text streaming
+        # 3. Token-by-token text streaming with event loop tick
         async for token in stream_gen:
             if token:
                 yield f"data: {json.dumps({'type': 'token', 'token': token})}\n\n"
+                # Brief async yield ensures Uvicorn & reverse proxies flush each chunk
+                await asyncio.sleep(0.015)
 
-        # 3. Final event: done marker with execution time
+        # 4. Final event: done marker with execution time
         elapsed_time = round(time.time() - start_time, 2)
         yield f"data: {json.dumps({'type': 'done', 'time_taken': elapsed_time})}\n\n"
 
@@ -180,9 +185,10 @@ async def user_query_stream(query: str):
         event_generator(),
         media_type="text/event-stream",
         headers={
-            "Cache-Control": "no-cache",
+            "Cache-Control": "no-cache, no-transform",
             "Connection": "keep-alive",
             "X-Accel-Buffering": "no",
+            "Content-Type": "text/event-stream; charset=utf-8",
         }
     )
 

@@ -75,17 +75,20 @@ async def generate_answer_stream(query, relevant_chunks):
 
     try:
         stream = await client.aio.interactions.create(**call_kwargs)
+        print("⚡ [Streaming Started]: ", end="", flush=True)
         async for event in stream:
             event_type = getattr(event, "event_type", None)
             if event_type == "step.delta":
                 delta = getattr(event, "delta", None)
                 text = getattr(delta, "text", None)
                 if text:
+                    print(text, end="", flush=True)
                     yield text
             elif event_type in ("interaction.created", "interaction.completed"):
                 interaction = getattr(event, "interaction", None)
                 if interaction and hasattr(interaction, "id") and interaction.id:
                     previous_id = interaction.id
+        print("\n✅ [Streaming Finished]\n", flush=True)
     except Exception as stream_err:
         print(f"Streaming exception: {stream_err}. Falling back to standard generation...")
         try:

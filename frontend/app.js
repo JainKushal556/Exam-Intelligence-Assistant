@@ -358,6 +358,8 @@ async function submitQuery(queryText) {
                         if (bodyEl) {
                             bodyEl.innerHTML = renderResponse(accumulatedText);
                             chatFeed.scrollTop = chatFeed.scrollHeight;
+                            // Yield to the browser paint cycle so words animate block-by-block
+                            await new Promise(resolve => setTimeout(resolve, 15));
                         }
                     } else if (data.type === "done") {
                         // Stream done
