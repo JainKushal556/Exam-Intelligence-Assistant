@@ -8,6 +8,7 @@ from Query_Pipeline.prompt import SYSTEM_PROMPT_2_0
 from google import genai
 import os
 import asyncio
+import time
 client = genai.Client(api_key=os.getenv("GEMINIAPI_KEY"))
 model_name = "gemini-3.5-flash-lite"
 previous_id = None
@@ -72,7 +73,10 @@ unrelated questions or give unsupported study suggestions.
 def answer_query(question: str):
     
     try:
+        st_time = time.time()
         q_emb = query_embedding.embed_query(question)
+        end_time = time.time()
+        print("Query Embedding Time: ", end_time - st_time)
 
     except Exception as err:
         return []
@@ -86,6 +90,7 @@ def answer_query(question: str):
 
 
 async def llm_answer(question):
+    
     retrieved = answer_query(question)
 
     if not retrieved:
@@ -95,9 +100,10 @@ async def llm_answer(question):
         structured_chunks = structure_retrieved_chunks(retrieved)
         context = structured_chunks["context"]
         sources = structured_chunks.get("sources", [])
-        
+    st_time = time.time()
     answer = await generate_answer(question, context)
-
+    end_time = time.time()
+    print("LLM Answer Time: ", end_time - st_time)
     # Extract unique clean filenames for frontend source attribution
     source_files = []
     seen = set()

@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 import hashlib
 from Ingestion_Pipeline.prompt import similarity_search_query
-
+import time
 def get_file_hash(pdf_path):
     sha256 = hashlib.sha256()
 
@@ -272,6 +272,7 @@ def insert_embedding_indb(chunk, embedding, metadata):
 
 def retrive_chunks(query_embedding, top_k):
     try:
+        st_time = time.time()
         con = psycopg2.connect(host=os.getenv("DB_HOST"),dbname=os.getenv("DB_DATABASE"),user=os.getenv("DB_USER"),password=os.getenv("DB_PASSWORD"),port = os.getenv("DB_PORT"),sslmode="require")
         cur = con.cursor()
     except Exception as e:
@@ -290,6 +291,8 @@ def retrive_chunks(query_embedding, top_k):
             print(f"❌ [retrive_chunks] Query execution failed: {e}")
             return []
         finally:
+            end_time = time.time()
+            print("Retrive Time: ", end_time - st_time)
             if con:
                 con.close()
             if cur:
