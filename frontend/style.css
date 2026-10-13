@@ -108,41 +108,37 @@ html, body {
 .header-brand {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
+    min-width: 0;
 }
 
-.brand-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-md);
+.brand-navbar-logo {
+    height: 42px;
+    width: auto;
+    max-width: 250px;
+    object-fit: contain;
+    display: block;
+    filter: drop-shadow(0 1px 2px rgba(68, 64, 60, 0.08));
+    transition: transform 0.25s ease;
+}
+
+.brand-navbar-logo:hover {
+    transform: scale(1.02);
+}
+
+.brand-text-block {
     display: flex;
     align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    overflow: hidden;
-    background: transparent;
-}
-
-.brand-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: var(--radius-md);
-    box-shadow: 0 2px 8px rgba(68, 64, 60, 0.15);
-}
-
-.brand-text h1 {
-    font-size: 1.08rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    letter-spacing: -0.01em;
-    line-height: 1.2;
+    padding-left: 14px;
+    border-left: 1px solid var(--border-subtle);
 }
 
 .brand-tagline {
     font-size: 0.76rem;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--text-muted);
+    letter-spacing: -0.01em;
+    white-space: nowrap;
 }
 
 /* Status Indicator */
@@ -218,10 +214,23 @@ html, body {
 }
 
 .welcome-icon {
-    font-size: 2.8rem;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
     display: inline-block;
-    filter: drop-shadow(0 4px 8px rgba(68, 64, 60, 0.08));
+}
+
+.welcome-logo-img {
+    width: 68px;
+    height: 68px;
+    border-radius: 20px;
+    object-fit: cover;
+    box-shadow: 0 10px 28px rgba(68, 64, 60, 0.14);
+    display: inline-block;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.welcome-logo-img:hover {
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: 0 14px 34px rgba(68, 64, 60, 0.20);
 }
 
 .welcome-card h2 {
@@ -923,29 +932,15 @@ html, body {
         flex-shrink: 0;
     }
 
-    .brand-icon svg {
-        width: 18px;
-        height: 18px;
+    .brand-navbar-logo {
+        height: 32px;
+        width: auto;
+        max-width: 170px;
+        object-fit: contain;
     }
 
-    .brand-text {
-        min-width: 0;
-        overflow: hidden;
-    }
-
-    .brand-text h1 {
-        font-size: 0.88rem;
-        font-weight: 700;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .brand-tagline {
-        font-size: 0.68rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+    .brand-text-block {
+        display: none;
     }
 
     .status-badge {
@@ -979,8 +974,13 @@ html, body {
     }
 
     .welcome-icon {
-        font-size: 2.2rem;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
+    }
+
+    .welcome-logo-img {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
     }
 
     .welcome-card h2 {
