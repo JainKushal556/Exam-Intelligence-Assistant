@@ -108,36 +108,58 @@ html, body {
 .header-brand {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 13px;
     min-width: 0;
 }
 
-.brand-navbar-logo {
+.brand-icon {
+    width: 42px;
     height: 42px;
-    width: auto;
-    max-width: 250px;
-    object-fit: contain;
-    display: block;
-    filter: drop-shadow(0 1px 2px rgba(68, 64, 60, 0.08));
-    transition: transform 0.25s ease;
-}
-
-.brand-navbar-logo:hover {
-    transform: scale(1.02);
-}
-
-.brand-text-block {
+    border-radius: 12px;
     display: flex;
     align-items: center;
-    padding-left: 14px;
-    border-left: 1px solid var(--border-subtle);
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: transparent;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.brand-tagline {
+.brand-icon:hover {
+    transform: scale(1.05);
+}
+
+.brand-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(68, 64, 60, 0.16);
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+}
+
+.brand-title {
+    font-size: 1.18rem;
+    font-weight: 800;
+    color: #18181b;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+    white-space: nowrap;
+}
+
+.brand-subtitle {
     font-size: 0.76rem;
     font-weight: 600;
-    color: var(--text-muted);
+    color: #78716c;
     letter-spacing: -0.01em;
+    line-height: 1.25;
+    margin-top: 1px;
     white-space: nowrap;
 }
 
@@ -921,26 +943,38 @@ html, body {
     }
 
     .header-brand {
-        gap: 8px;
+        gap: 10px;
         min-width: 0;
     }
 
     .brand-icon {
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
         flex-shrink: 0;
     }
 
-    .brand-navbar-logo {
-        height: 32px;
-        width: auto;
-        max-width: 170px;
-        object-fit: contain;
+    .brand-img {
+        border-radius: 10px;
     }
 
-    .brand-text-block {
-        display: none;
+    .brand-text {
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    .brand-title {
+        font-size: 0.98rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .brand-subtitle {
+        font-size: 0.66rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .status-badge {
@@ -1254,12 +1288,12 @@ html, body {
         padding: 0 8px;
     }
 
-    .brand-tagline {
-        display: none;
+    .brand-title {
+        font-size: 0.88rem;
     }
 
-    .brand-text h1 {
-        font-size: 0.82rem;
+    .brand-subtitle {
+        display: none;
     }
 
     .status-badge {
