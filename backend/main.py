@@ -8,7 +8,7 @@ from pathlib import Path
 from backend.utilities import format_size
 from datetime import datetime
 import shutil
-import os
+import asyncio
 import time
 import json
 
