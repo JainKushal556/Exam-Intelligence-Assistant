@@ -429,6 +429,12 @@ html, body {
     color: #1d4ed8;
 }
 
+.attr-chip-dept {
+    background: #faf5ff;
+    border-color: #d8b4fe;
+    color: #7e22ce;
+}
+
 .attr-chip-scope {
     background: #fef3c7;
     border-color: #fde68a;
