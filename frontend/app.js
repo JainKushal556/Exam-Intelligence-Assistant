@@ -418,18 +418,11 @@ function adjustTextareaHeight() {
 }
 
 // ==========================================================================
-// 4. HERO POSTER CONTROLLER (FIRST-TIME DISPLAY & DISMISSAL)
+// 4. HERO POSTER CONTROLLER (DISPLAY & DISMISSAL)
 // ==========================================================================
-function dismissHeroPoster(remember = true) {
+function dismissHeroPoster() {
     if (!heroPoster) return;
     heroPoster.classList.add("hero-poster-closing");
-    if (remember) {
-        try {
-            localStorage.setItem("exam_intelligence_hero_dismissed", "true");
-        } catch (e) {
-            console.warn("localStorage unavailable:", e);
-        }
-    }
     setTimeout(() => {
         heroPoster.style.display = "none";
         heroPoster.classList.remove("hero-poster-closing");
@@ -471,14 +464,14 @@ chatInput.addEventListener("keydown", (e) => {
 // Hero Section Actions
 if (heroCancelBtn) {
     heroCancelBtn.addEventListener("click", () => {
-        dismissHeroPoster(true);
+        dismissHeroPoster();
     });
 }
 
 if (heroCtaBtn) {
     heroCtaBtn.addEventListener("click", () => {
         // CTA connects to existing question interface
-        dismissHeroPoster(true);
+        dismissHeroPoster();
         if (chatInput) {
             chatInput.focus();
             chatInput.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -497,7 +490,7 @@ if (heroToggleBtn) {
         if (isHidden) {
             showHeroPoster();
         } else {
-            dismissHeroPoster(false);
+            dismissHeroPoster();
         }
     });
 }
@@ -520,21 +513,29 @@ document.addEventListener("DOMContentLoaded", () => {
     checkBackendHealth();
     setInterval(checkBackendHealth, 12 * 60 * 1000);
 
-    // First-time visit poster display logic
+    // Clean up any legacy localStorage flag so it never hides the banner
     try {
-        const isDismissed = localStorage.getItem("exam_intelligence_hero_dismissed") === "true";
-        if (isDismissed) {
-            if (heroPoster) heroPoster.style.display = "none";
-            if (welcomeCard) welcomeCard.style.display = "block";
-        } else {
-            // First time visitor: show hero poster prominently
-            if (heroPoster) heroPoster.style.display = "block";
-            if (welcomeCard) welcomeCard.style.display = "none";
-        }
-    } catch (e) {
-        if (heroPoster) heroPoster.style.display = "block";
-        if (welcomeCard) welcomeCard.style.display = "none";
+        localStorage.removeItem("exam_intelligence_hero_dismissed");
+    } catch (e) {}
+
+    // Every time the app loads fresh (on phone or laptop), show the hero banner automatically
+    if (heroPoster) {
+        heroPoster.classList.remove("hero-poster-closing");
+        heroPoster.style.display = "block";
+    }
+    if (welcomeCard) {
+        welcomeCard.style.display = "none";
     }
 
-    chatInput.focus();
+    // Scroll chat feed to the top so the banner is in full view
+    if (chatFeed) {
+        chatFeed.scrollTop = 0;
+    }
+
+    // On mobile devices, avoid autofocusing so the virtual keyboard does not pop up
+    // and obscure the hero banner immediately upon opening the app.
+    const isMobileDevice = window.innerWidth <= 768 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (!isMobileDevice && chatInput) {
+        chatInput.focus({ preventScroll: true });
+    }
 });
