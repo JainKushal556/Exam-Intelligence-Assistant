@@ -14,6 +14,10 @@ const chatForm = document.getElementById("chat-form");
 const chatInput = document.getElementById("chat-input");
 const sendBtn = document.getElementById("send-btn");
 const welcomeCard = document.getElementById("welcome-card");
+const heroPoster = document.getElementById("hero-poster");
+const heroCancelBtn = document.getElementById("hero-cancel-btn");
+const heroCtaBtn = document.getElementById("hero-cta-btn");
+const heroToggleBtn = document.getElementById("hero-toggle-btn");
 
 // Configure Marked.js for rich markdown formatting
 if (typeof marked !== "undefined") {
@@ -26,7 +30,7 @@ if (typeof marked !== "undefined") {
 }
 
 // ==========================================================================
-// 1. BACKEND HEALTH CHECK
+// 1. BACKEND HEALTH CHECK & STATS
 // ==========================================================================
 async function checkBackendHealth() {
     if (!healthStatus) return;
@@ -46,7 +50,6 @@ async function checkBackendHealth() {
     }
 }
 
-// ==========================================================================
 // ==========================================================================
 // 2. CHAT RENDERING & EDITORIAL STRUCTURE
 // ==========================================================================
@@ -242,6 +245,9 @@ function finalizeAiMessage(contentEl, content, sources = []) {
 function appendMessage(sender, content, isMarkdown = false, sources = []) {
     if (!chatFeed) return;
 
+    if (heroPoster && heroPoster.style.display !== "none") {
+        heroPoster.style.display = "none";
+    }
     if (welcomeCard && welcomeCard.style.display !== "none") {
         welcomeCard.style.display = "none";
     }
@@ -412,7 +418,41 @@ function adjustTextareaHeight() {
 }
 
 // ==========================================================================
-// 4. EVENT LISTENERS
+// 4. HERO POSTER CONTROLLER (FIRST-TIME DISPLAY & DISMISSAL)
+// ==========================================================================
+function dismissHeroPoster(remember = true) {
+    if (!heroPoster) return;
+    heroPoster.classList.add("hero-poster-closing");
+    if (remember) {
+        try {
+            localStorage.setItem("exam_intelligence_hero_dismissed", "true");
+        } catch (e) {
+            console.warn("localStorage unavailable:", e);
+        }
+    }
+    setTimeout(() => {
+        heroPoster.style.display = "none";
+        heroPoster.classList.remove("hero-poster-closing");
+        if (welcomeCard && !chatFeed.querySelector(".message")) {
+            welcomeCard.style.display = "block";
+        }
+    }, 260);
+}
+
+function showHeroPoster() {
+    if (!heroPoster) return;
+    heroPoster.classList.remove("hero-poster-closing");
+    heroPoster.style.display = "block";
+    if (welcomeCard) {
+        welcomeCard.style.display = "none";
+    }
+    if (chatFeed) {
+        chatFeed.scrollTo({ top: 0, behavior: "smooth" });
+    }
+}
+
+// ==========================================================================
+// 5. EVENT LISTENERS
 // ==========================================================================
 chatForm.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -428,6 +468,40 @@ chatInput.addEventListener("keydown", (e) => {
     }
 });
 
+// Hero Section Actions
+if (heroCancelBtn) {
+    heroCancelBtn.addEventListener("click", () => {
+        dismissHeroPoster(true);
+    });
+}
+
+if (heroCtaBtn) {
+    heroCtaBtn.addEventListener("click", () => {
+        // CTA connects to existing question interface
+        dismissHeroPoster(true);
+        if (chatInput) {
+            chatInput.focus();
+            chatInput.scrollIntoView({ behavior: "smooth", block: "center" });
+            const form = document.getElementById("chat-form");
+            if (form) {
+                form.classList.add("input-pulse");
+                setTimeout(() => form.classList.remove("input-pulse"), 1600);
+            }
+        }
+    });
+}
+
+if (heroToggleBtn) {
+    heroToggleBtn.addEventListener("click", () => {
+        const isHidden = !heroPoster || heroPoster.style.display === "none" || getComputedStyle(heroPoster).display === "none";
+        if (isHidden) {
+            showHeroPoster();
+        } else {
+            dismissHeroPoster(false);
+        }
+    });
+}
+
 // Clickable suggestion chips
 document.addEventListener("click", (e) => {
     const chip = e.target.closest(".suggestion-chip");
@@ -440,10 +514,27 @@ document.addEventListener("click", (e) => {
 });
 
 // ==========================================================================
-// 5. INITIALIZATION
+// 6. INITIALIZATION
 // ==========================================================================
 document.addEventListener("DOMContentLoaded", () => {
     checkBackendHealth();
     setInterval(checkBackendHealth, 12 * 60 * 1000);
+
+    // First-time visit poster display logic
+    try {
+        const isDismissed = localStorage.getItem("exam_intelligence_hero_dismissed") === "true";
+        if (isDismissed) {
+            if (heroPoster) heroPoster.style.display = "none";
+            if (welcomeCard) welcomeCard.style.display = "block";
+        } else {
+            // First time visitor: show hero poster prominently
+            if (heroPoster) heroPoster.style.display = "block";
+            if (welcomeCard) welcomeCard.style.display = "none";
+        }
+    } catch (e) {
+        if (heroPoster) heroPoster.style.display = "block";
+        if (welcomeCard) welcomeCard.style.display = "none";
+    }
+
     chatInput.focus();
 });
