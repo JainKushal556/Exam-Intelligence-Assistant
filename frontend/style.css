@@ -1833,65 +1833,106 @@ html, body {
 
     .app-header {
         height: 56px;
-        padding: 0 12px;
+        padding: 0 10px;
+        gap: 8px;
     }
 
     .header-brand {
-        gap: 10px;
+        gap: 8px;
         min-width: 0;
+        flex: 1;
     }
 
     .brand-icon {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
         flex-shrink: 0;
     }
 
     .brand-img {
-        border-radius: 10px;
+        border-radius: 9px;
     }
 
     .brand-text {
         min-width: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
         overflow: hidden;
     }
 
     .brand-title {
-        font-size: 0.98rem;
+        font-size: 0.94rem;
+        font-weight: 800;
+        line-height: 1.15;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        color: #18181b;
     }
 
     .brand-subtitle {
-        font-size: 0.66rem;
+        display: block !important;
+        font-size: 0.64rem;
+        font-weight: 600;
+        color: #78716c;
+        line-height: 1.15;
+        margin-top: 1px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
-    .status-badge {
-        padding: 4px 9px;
-        font-size: 0.72rem;
-        flex-shrink: 0;
+    /* Header Actions Group Mobile: icon-only button and dot-only badge */
+    .header-actions {
+        display: flex;
+        align-items: center;
         gap: 6px;
+        flex-shrink: 0;
+    }
+
+    /* Overview button: keep only the (i) icon on mobile */
+    .btn-hero-toggle {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .btn-hero-toggle span {
+        display: none !important;
+    }
+
+    .btn-hero-toggle svg {
+        width: 15px;
+        height: 15px;
+    }
+
+    /* Status badge: keep only the green dot on mobile */
+    .status-badge {
+        width: 26px;
+        height: 26px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .status-badge .status-text {
+        display: none !important;
     }
 
     .status-dot {
-        width: 7px;
-        height: 7px;
-    }
-
-    /* Header Actions Group Mobile */
-    .header-actions {
-        gap: 6px;
-    }
-
-    .btn-hero-toggle {
-        padding: 4px 8px;
-        font-size: 0.70rem;
-        gap: 4px;
+        width: 8px;
+        height: 8px;
+        margin: 0;
     }
 
     /* Main Container & Message Feed */
@@ -2379,27 +2420,47 @@ html, body {
 @media (max-width: 380px) {
     .app-header {
         padding: 0 8px;
+        gap: 6px;
+    }
+
+    .header-brand {
+        gap: 6px;
+    }
+
+    .brand-icon {
+        width: 30px;
+        height: 30px;
     }
 
     .brand-title {
-        font-size: 0.88rem;
+        font-size: 0.86rem;
     }
 
     .brand-subtitle {
-        display: none;
-    }
-
-    .status-badge {
-        padding: 3px 7px;
-        font-size: 0.68rem;
-    }
-
-    .btn-hero-toggle span {
-        display: none;
+        display: block !important;
+        font-size: 0.58rem;
     }
 
     .btn-hero-toggle {
-        padding: 3px 6px;
+        width: 28px;
+        height: 28px;
+        padding: 0;
+    }
+
+    .btn-hero-toggle svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .status-badge {
+        width: 24px;
+        height: 24px;
+        padding: 0;
+    }
+
+    .status-dot {
+        width: 7px;
+        height: 7px;
     }
 
     .hero-poster {
