@@ -19,6 +19,11 @@ const heroCancelBtn = document.getElementById("hero-cancel-btn");
 const heroCtaBtn = document.getElementById("hero-cta-btn");
 const heroToggleBtn = document.getElementById("hero-toggle-btn");
 
+// Immediately wipe any legacy dismissal flag so it never hides the banner
+try {
+    localStorage.removeItem("exam_intelligence_hero_dismissed");
+} catch (e) {}
+
 // Configure Marked.js for rich markdown formatting
 if (typeof marked !== "undefined") {
     marked.setOptions({
@@ -507,11 +512,10 @@ document.addEventListener("click", (e) => {
 });
 
 // ==========================================================================
-// 6. INITIALIZATION
+// 6. INITIALIZATION (PHONE & LAPTOP AUTO-LOAD)
 // ==========================================================================
-document.addEventListener("DOMContentLoaded", () => {
+function initApp() {
     checkBackendHealth();
-    setInterval(checkBackendHealth, 12 * 60 * 1000);
 
     // Clean up any legacy localStorage flag so it never hides the banner
     try {
@@ -527,15 +531,36 @@ document.addEventListener("DOMContentLoaded", () => {
         welcomeCard.style.display = "none";
     }
 
-    // Scroll chat feed to the top so the banner is in full view
+    // Scroll chat feed and window to top so the banner is immediately in view
     if (chatFeed) {
         chatFeed.scrollTop = 0;
     }
+    window.scrollTo(0, 0);
 
     // On mobile devices, avoid autofocusing so the virtual keyboard does not pop up
     // and obscure the hero banner immediately upon opening the app.
     const isMobileDevice = window.innerWidth <= 768 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     if (!isMobileDevice && chatInput) {
         chatInput.focus({ preventScroll: true });
+    }
+}
+
+// Ensure initApp runs regardless of readyState timing
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initApp);
+} else {
+    initApp();
+}
+
+// Recurring health check
+setInterval(checkBackendHealth, 12 * 60 * 1000);
+
+// Handle mobile browser back/forward cache or tab wake-up
+window.addEventListener("pageshow", () => {
+    if (heroPoster && !chatFeed?.querySelector(".message")) {
+        heroPoster.style.display = "block";
+        heroPoster.classList.remove("hero-poster-closing");
+        if (welcomeCard) welcomeCard.style.display = "none";
+        if (chatFeed) chatFeed.scrollTop = 0;
     }
 });
