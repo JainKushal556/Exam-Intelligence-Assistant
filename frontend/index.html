@@ -1,17 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Exam Intelligence Assistant</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="assets/exam_intelligence_favicon.ico">
     <link rel="icon" type="image/png" href="assets/exam_intelligence_favicon.png">
     <link rel="apple-touch-icon" href="assets/exam_intelligence_favicon.png">
     <link rel="stylesheet" href="style.css?v=2.6">
+    <!-- Vercel web analytics -->
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
 </head>
+
 <body>
     <div class="app-layout">
         <!-- TOP HEADER -->
@@ -28,8 +37,10 @@
 
             <!-- Header Actions -->
             <div class="header-actions">
-                <button type="button" class="btn-hero-toggle" id="hero-toggle-btn" title="View platform tour & overview" aria-label="Toggle platform overview">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <button type="button" class="btn-hero-toggle" id="hero-toggle-btn" title="View platform tour & overview"
+                    aria-label="Toggle platform overview">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"></circle>
                         <line x1="12" y1="16" x2="12" y2="12"></line>
                         <line x1="12" y1="8" x2="12.01" y2="8"></line>
@@ -49,10 +60,13 @@
             <!-- Message Feed -->
             <div class="chat-feed" id="chat-feed">
                 <!-- HERO POSTER SECTION: ABOUT THE PROJECT -->
-                <section class="hero-poster" id="hero-poster" style="display: block;" aria-label="About Exam Intelligence Assistant">
+                <section class="hero-poster" id="hero-poster" style="display: block;"
+                    aria-label="About Exam Intelligence Assistant">
                     <!-- Dismiss Button -->
-                    <button type="button" class="hero-cancel-btn" id="hero-cancel-btn" title="Dismiss overview" aria-label="Dismiss about project">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <button type="button" class="hero-cancel-btn" id="hero-cancel-btn" title="Dismiss overview"
+                        aria-label="Dismiss about project">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="18" y1="6" x2="6" y2="18"></line>
                             <line x1="6" y1="6" x2="18" y2="18"></line>
                         </svg>
@@ -75,33 +89,53 @@
 
                             <div class="poster-attribution-row">
                                 <span class="attr-chip attr-chip-maker">
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
                                     Built by a PBC Student
                                 </span>
                                 <span class="attr-chip attr-chip-college">
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                    </svg>
                                     Panskura Banamali College
                                 </span>
                                 <span class="attr-chip attr-chip-dept">
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="16 18 22 12 16 6"></polyline>
+                                        <polyline points="8 6 2 12 8 18"></polyline>
+                                    </svg>
                                     BCA &amp; CS Department Specific
                                 </span>
                             </div>
 
                             <p class="poster-intro">
-                                An AI-powered academic assistant using Retrieval-Augmented Generation (RAG) to help <strong>Panskura Banamali College</strong> students in the <strong>BCA &amp; Computer Science (CS) Department</strong> explore previous-year question papers, find relevant questions, and understand topics with grounded answers.
+                                An AI-powered academic assistant using Retrieval-Augmented Generation (RAG) to help
+                                <strong>Panskura Banamali College</strong> students in the <strong>BCA &amp; Computer
+                                    Science (CS) Department</strong> explore previous-year question papers, find
+                                relevant questions, and understand topics with grounded answers.
                             </p>
 
                             <div class="poster-actions-row">
                                 <button type="button" class="hero-cta-btn" id="hero-cta-btn">
                                     <span>Start Exploring</span>
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
                                         <line x1="5" y1="12" x2="19" y2="12"></line>
                                         <polyline points="12 5 19 12 12 19"></polyline>
                                     </svg>
                                 </button>
                                 <div class="poster-microcopy">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                    </svg>
                                     <span>No hallucinations. Grounded in indexed PBC papers.</span>
                                 </div>
                             </div>
@@ -180,7 +214,12 @@
                         <div class="infobar-stats-row">
                             <div class="infobar-badge-box">
                                 <span class="infobar-archive-badge">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                                        <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                                        <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                                    </svg>
                                     PBC ARCHIVE
                                 </span>
                                 <span class="infobar-archive-desc">Indexed Exam Knowledge Base</span>
@@ -215,7 +254,11 @@
                         <!-- Lower Tier: Technology Stack Row -->
                         <div class="infobar-tech-row">
                             <div class="infobar-tech-label">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="16 18 22 12 16 6"></polyline>
+                                    <polyline points="8 6 2 12 8 18"></polyline>
+                                </svg>
                                 BUILT WITH
                             </div>
                             <div class="infobar-tech-pills">
@@ -245,7 +288,8 @@
                             <!-- Mock student question bubble -->
                             <div class="demo-query-strip">
                                 <span class="demo-query-label">Student Question</span>
-                                <span class="demo-query-text">"What are the common operations on Data Structures?"</span>
+                                <span class="demo-query-text">"What are the common operations on Data
+                                    Structures?"</span>
                             </div>
 
                             <!-- Two-column: Concept | PYQs -->
@@ -259,15 +303,18 @@
                                     <div class="demo-concept-list">
                                         <div class="demo-concept-item">
                                             <span class="dci-term">Traversal</span>
-                                            <span class="dci-desc">Visiting and processing each element exactly once.</span>
+                                            <span class="dci-desc">Visiting and processing each element exactly
+                                                once.</span>
                                         </div>
                                         <div class="demo-concept-item">
                                             <span class="dci-term">Insertion</span>
-                                            <span class="dci-desc">Adding a new element at any specified position.</span>
+                                            <span class="dci-desc">Adding a new element at any specified
+                                                position.</span>
                                         </div>
                                         <div class="demo-concept-item">
                                             <span class="dci-term">Deletion</span>
-                                            <span class="dci-desc">Removing an element and reorganizing the structure.</span>
+                                            <span class="dci-desc">Removing an element and reorganizing the
+                                                structure.</span>
                                         </div>
                                         <div class="demo-concept-item">
                                             <span class="dci-term">Searching & Sorting</span>
@@ -293,7 +340,8 @@
                                                 <span class="dpyq-tag tag-sm">2nd Sem &bull; Practical</span>
                                                 <span class="dpyq-tag tag-qn">Q.2</span>
                                             </div>
-                                            <p class="demo-pyq-text">"What are the various operations that can be performed on different Data Structures?"</p>
+                                            <p class="demo-pyq-text">"What are the various operations that can be
+                                                performed on different Data Structures?"</p>
                                         </div>
                                         <div class="demo-pyq-item">
                                             <div class="demo-pyq-meta">
@@ -302,11 +350,16 @@
                                                 <span class="dpyq-tag tag-mk">1 Mark</span>
                                                 <span class="dpyq-tag tag-qn">Q.1(a)</span>
                                             </div>
-                                            <p class="demo-pyq-text">"What is stack? Write down the operation of stack in memory."</p>
+                                            <p class="demo-pyq-text">"What is stack? Write down the operation of stack
+                                                in memory."</p>
                                         </div>
                                     </div>
                                     <div class="demo-pyq-footer">
-                                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+                                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <polyline points="12 6 12 12 14 14"></polyline>
+                                        </svg>
                                         pgvector cosine distance &bull; PostgreSQL vector store
                                     </div>
                                 </div>
@@ -316,35 +369,72 @@
 
                     <!-- FOOTER: Scope Notice -->
                     <div class="poster-scope-notice">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                        <span>Data scope: <strong>Panskura Banamali College (PBC)</strong> &bull; <strong>BCA &amp; CS Department Specific</strong>. Exam papers from other departments or institutions are not indexed.</span>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <span>Data scope: <strong>Panskura Banamali College (PBC)</strong> &bull; <strong>BCA &amp; CS
+                                Department Specific</strong>. Exam papers from other departments or institutions are not
+                            indexed.</span>
                     </div>
                 </section>
 
                 <!-- Welcome Banner & Suggestion Chips -->
                 <div class="welcome-card" id="welcome-card" style="display: none;">
                     <div class="welcome-icon">
-                        <img src="assets/exam_intelligence_favicon.png" alt="Exam Intelligence Assistant" class="welcome-logo-img">
+                        <img src="assets/exam_intelligence_favicon.png" alt="Exam Intelligence Assistant"
+                            class="welcome-logo-img">
                     </div>
                     <h2>Welcome to Exam Intelligence Assistant</h2>
-                    <p>Ask anything about past university question papers, marks distribution, repeated questions, topics, or specific subjects.</p>
-                    
+                    <p>Ask anything about past university question papers, marks distribution, repeated questions,
+                        topics, or specific subjects.</p>
+
                     <div class="suggestions-label">Try asking:</div>
                     <div class="suggestions-grid">
-                        <button class="suggestion-chip" data-query="Which questions are repeated frequently in Data Structures?">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-10 0"></path><line x1="12" y1="2" x2="12" y2="9"></line><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"></line><line x1="1" y1="18" x2="3" y2="18"></line><line x1="21" y1="18" x2="23" y2="18"></line><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"></line><line x1="23" y1="22" x2="1" y2="22"></line></svg>
+                        <button class="suggestion-chip"
+                            data-query="Which questions are repeated frequently in Data Structures?">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 18a5 5 0 0 0-10 0"></path>
+                                <line x1="12" y1="2" x2="12" y2="9"></line>
+                                <line x1="4.22" y1="10.22" x2="5.64" y2="11.64"></line>
+                                <line x1="1" y1="18" x2="3" y2="18"></line>
+                                <line x1="21" y1="18" x2="23" y2="18"></line>
+                                <line x1="18.36" y1="11.64" x2="19.78" y2="10.22"></line>
+                                <line x1="23" y1="22" x2="1" y2="22"></line>
+                            </svg>
                             <span>Repeated questions in Data Structures</span>
                         </button>
                         <button class="suggestion-chip" data-query="What are the 10-mark questions from 2022 BCA CC11?">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg>
                             <span>10-mark questions in BCA CC11</span>
                         </button>
-                        <button class="suggestion-chip" data-query="Explain the questions asked on Database Normalization.">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <button class="suggestion-chip"
+                            data-query="Explain the questions asked on Database Normalization.">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
                             <span>Normalization questions across years</span>
                         </button>
                         <button class="suggestion-chip" data-query="Show me all questions on Binary Search Tree.">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                                <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                                <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                                <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                            </svg>
                             <span>Binary Search Tree questions</span>
                         </button>
                     </div>
@@ -354,15 +444,12 @@
             <!-- Chat Input Area (Fixed Bottom) -->
             <footer class="chat-input-wrapper">
                 <form class="input-form" id="chat-form" onsubmit="return false;">
-                    <textarea 
-                        id="chat-input" 
-                        class="chat-input" 
-                        placeholder="Ask a question about exam papers, topics, or marks..." 
-                        rows="1"
-                        autocomplete="off"
-                    ></textarea>
+                    <textarea id="chat-input" class="chat-input"
+                        placeholder="Ask a question about exam papers, topics, or marks..." rows="1"
+                        autocomplete="off"></textarea>
                     <button type="submit" class="btn-send" id="send-btn" title="Send Question" aria-label="Send">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="22" y1="2" x2="11" y2="13"></line>
                             <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
                         </svg>
@@ -379,4 +466,5 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="app.js?v=2.6"></script>
 </body>
+
 </html>
