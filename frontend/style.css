@@ -213,23 +213,68 @@ html, body {
     font-weight: 600;
     color: var(--text-secondary);
     box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+    user-select: none;
 }
 
 .status-dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background-color: var(--text-muted);
-    transition: background-color 0.3s ease;
+    background-color: var(--status-red);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* Connecting & Offline: Red and Blinking */
+.status-badge.connecting .status-dot,
+.status-badge.offline .status-dot {
+    background-color: #ef4444;
+    animation: pulse-red-dot 1.15s infinite ease-in-out;
+}
+
+.status-badge.connecting {
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.status-badge.connecting .status-text {
+    color: #ef4444;
+}
+
+/* Online / Connected: Solid Glowing Green */
 .status-badge.online .status-dot {
     background-color: var(--status-green);
-    box-shadow: 0 0 8px rgba(5, 150, 105, 0.4);
+    box-shadow: 0 0 8px rgba(5, 150, 105, 0.6);
+    animation: pulse-green-subtle 3s infinite ease-in-out;
 }
 
-.status-badge.offline .status-dot {
-    background-color: var(--status-red);
+.status-badge.online {
+    border-color: rgba(5, 150, 105, 0.3);
+}
+
+.status-badge.online .status-text {
+    color: var(--text-secondary);
+}
+
+@keyframes pulse-red-dot {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.75);
+    }
+    50% {
+        opacity: 0.3;
+        transform: scale(0.85);
+        box-shadow: 0 0 8px 3px rgba(239, 68, 68, 0.35);
+    }
+}
+
+@keyframes pulse-green-subtle {
+    0%, 100% {
+        box-shadow: 0 0 6px rgba(5, 150, 105, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 12px rgba(5, 150, 105, 0.8);
+    }
 }
 
 /* ==========================================================================
@@ -1656,6 +1701,22 @@ html, body {
     font-size: 0.88rem;
     color: var(--text-muted);
     font-weight: 500;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.typing-text.fade-step {
+    animation: typingStepFade 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes typingStepFade {
+    0% {
+        opacity: 0;
+        transform: translateY(3px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* ==========================================================================

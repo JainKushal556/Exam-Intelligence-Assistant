@@ -35,24 +35,93 @@ if (typeof marked !== "undefined") {
 }
 
 // ==========================================================================
-// 1. BACKEND HEALTH CHECK & STATS
+// 1. BACKEND HEALTH CHECK & ACTIVE STATUS CONTROLLER
 // ==========================================================================
-async function checkBackendHealth() {
+let isBackendConnected = false;
+let healthCheckTimer = null;
+let healthCheckAttempts = 0;
+
+function setBackendStatus(state, label) {
     if (!healthStatus) return;
     const statusText = healthStatus.querySelector(".status-text");
+
+    if (state === "online") {
+        isBackendConnected = true;
+        healthStatus.className = "status-badge online";
+        if (statusText) statusText.textContent = label || "Live";
+        healthStatus.setAttribute("title", "Backend is connected & ready");
+    } else if (state === "connecting") {
+        isBackendConnected = false;
+        healthStatus.className = "status-badge connecting";
+        if (statusText) statusText.textContent = label || "Starting Backend...";
+        healthStatus.setAttribute("title", "Waking up backend server (Render free-tier spin-up)");
+    } else {
+        isBackendConnected = false;
+        healthStatus.className = "status-badge offline";
+        if (statusText) statusText.textContent = label || "Offline";
+        healthStatus.setAttribute("title", "Backend server is unreachable");
+    }
+}
+
+async function checkBackendHealth() {
+    if (healthCheckTimer) {
+        clearTimeout(healthCheckTimer);
+        healthCheckTimer = null;
+    }
+
+    // Keep badge in connecting mode with red blinking dot if not yet connected
+    if (!isBackendConnected) {
+        setBackendStatus("connecting", "Starting Backend...");
+    }
+
     try {
-        const response = await fetch(`${API_BASE_URL}/health`, { method: "GET" });
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 7000);
+
+        const response = await fetch(`${API_BASE_URL}/health`, {
+            method: "GET",
+            signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
         if (response.ok) {
-            healthStatus.className = "status-badge online";
-            statusText.textContent = "Live";
+            healthCheckAttempts = 0;
+            setBackendStatus("online", "Live");
+            // Recurring heartbeat every 45 seconds once connected
+            healthCheckTimer = setTimeout(checkBackendHealth, 45000);
+            return true;
         } else {
-            healthStatus.className = "status-badge offline";
-            statusText.textContent = "Server Error";
+            throw new Error(`Health HTTP ${response.status}`);
         }
     } catch (error) {
-        healthStatus.className = "status-badge offline";
-        statusText.textContent = "Offline";
+        healthCheckAttempts++;
+        // Maintain red blinking dot while waking up
+        setBackendStatus("connecting", healthCheckAttempts > 3 ? "Waking up server..." : "Starting Backend...");
+
+        // Rapid retry (every 3 seconds) while server is still cold starting
+        healthCheckTimer = setTimeout(checkBackendHealth, 3000);
+        return false;
     }
+}
+
+// Helper to await backend ready state if question is submitted during cold-start
+async function waitForBackend(maxWaitMs = 65000, onProgress) {
+    if (isBackendConnected) return true;
+    const startTime = Date.now();
+
+    while (Date.now() - startTime < maxWaitMs) {
+        const elapsedSec = Math.round((Date.now() - startTime) / 1000);
+        if (elapsedSec > 10 && onProgress) {
+            onProgress("Warming up inference engine, almost ready... ⏳");
+        } else if (elapsedSec > 26 && onProgress) {
+            onProgress("Finalizing backend connection, thanks for waiting... ⏳");
+        }
+
+        const ok = await checkBackendHealth();
+        if (ok) return true;
+        await new Promise(res => setTimeout(res, 2500));
+    }
+    return false;
 }
 
 // ==========================================================================
@@ -279,7 +348,7 @@ function appendMessage(sender, content, isMarkdown = false, sources = []) {
 }
 
 // ==========================================================================
-// 3. QUERY SUBMISSION (WITH REAL-TIME TOKEN STREAMING)
+// 3. QUERY SUBMISSION (WITH DYNAMIC PIPELINE STATUS & STREAMING)
 // ==========================================================================
 async function submitQuery(queryText) {
     const query = (queryText || chatInput.value).trim();
@@ -290,7 +359,7 @@ async function submitQuery(queryText) {
     adjustTextareaHeight();
     sendBtn.disabled = true;
 
-    // Add typing indicator
+    // Add typing indicator with dynamic status message
     const typingId = "typing-" + Date.now();
     const typingEl = document.createElement("div");
     typingEl.className = "message message-ai typing-msg";
@@ -300,11 +369,70 @@ async function submitQuery(queryText) {
             <div class="typing-indicator">
                 <span></span><span></span><span></span>
             </div>
-            <span class="typing-text">Searching past exam papers & synthesizing answer...</span>
+            <span class="typing-text">Connecting...</span>
         </div>
     `;
     chatFeed.appendChild(typingEl);
     chatFeed.scrollTop = chatFeed.scrollHeight;
+
+    function updateTypingText(text) {
+        const el = document.getElementById(typingId);
+        if (!el) return;
+        const textSpan = el.querySelector(".typing-text");
+        if (textSpan && textSpan.textContent !== text) {
+            textSpan.classList.remove("fade-step");
+            void textSpan.offsetWidth; // Force CSS repaint
+            textSpan.textContent = text;
+            textSpan.classList.add("fade-step");
+            chatFeed.scrollTop = chatFeed.scrollHeight;
+        }
+    }
+
+    // Step A: If backend is still starting/connecting, inform user and wait for wake-up
+    if (!isBackendConnected) {
+        updateTypingText("Our backend is starting up, just a sec... ⏳");
+        const wokeUp = await waitForBackend(65000, updateTypingText);
+        if (!wokeUp) {
+            document.getElementById(typingId)?.remove();
+            appendMessage(
+                "ai",
+                "⚠️ **Backend is taking longer than expected to wake up**.\n\nSince our server runs on free-tier cloud hosting (Render), it spins down to sleep when idle. Please wait a few moments and try your question again.",
+                true
+            );
+            sendBtn.disabled = false;
+            chatInput.focus();
+            return;
+        }
+        updateTypingText("Backend started! ⚡");
+        await new Promise(r => setTimeout(r, 600));
+    }
+
+    // Step B: Dynamic progressive status stages (never static!)
+    let isStreamingActive = false;
+    let stageTimers = [];
+
+    function clearStageTimers() {
+        stageTimers.forEach(t => clearTimeout(t));
+        stageTimers = [];
+    }
+
+    updateTypingText("Generating query embeddings... 🧠");
+
+    stageTimers.push(
+        setTimeout(() => {
+            if (!isStreamingActive) {
+                updateTypingText("Searching relevant exam chunks... 📚");
+            }
+        }, 850)
+    );
+
+    stageTimers.push(
+        setTimeout(() => {
+            if (!isStreamingActive) {
+                updateTypingText("LLM is generating response... 🤖");
+            }
+        }, 2200)
+    );
 
     let aiMessageEl = null;
     let contentEl = null;
@@ -313,6 +441,8 @@ async function submitQuery(queryText) {
     let streamSources = [];
 
     function initStreamBubble() {
+        isStreamingActive = true;
+        clearStageTimers();
         document.getElementById(typingId)?.remove();
 
         aiMessageEl = document.createElement("div");
@@ -381,6 +511,8 @@ async function submitQuery(queryText) {
             }
         }
 
+        clearStageTimers();
+
         // Finalize editorial card & sources when streaming completes
         if (aiMessageEl && contentEl) {
             finalizeAiMessage(contentEl, accumulatedText, streamSources);
@@ -392,6 +524,9 @@ async function submitQuery(queryText) {
 
     } catch (streamErr) {
         console.warn("Streaming unavailable, falling back to legacy query:", streamErr);
+        clearStageTimers();
+        updateTypingText("Retrieving answer from archive... 📄");
+
         try {
             const fallbackRes = await fetch(`${API_BASE_URL}/query?query=${encodeURIComponent(query)}`, {
                 method: "POST"
@@ -411,6 +546,7 @@ async function submitQuery(queryText) {
             appendMessage("ai", `❌ **Connection Error**: Could not connect to the backend server (${API_BASE_URL}).`, true);
         }
     } finally {
+        clearStageTimers();
         sendBtn.disabled = false;
         chatInput.focus();
     }
@@ -552,8 +688,7 @@ if (document.readyState === "loading") {
     initApp();
 }
 
-// Recurring health check
-setInterval(checkBackendHealth, 12 * 60 * 1000);
+// Health check is automatically scheduled and managed by checkBackendHealth()
 
 // Handle mobile browser back/forward cache or tab wake-up
 window.addEventListener("pageshow", () => {

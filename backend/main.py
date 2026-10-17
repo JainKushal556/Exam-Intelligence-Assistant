@@ -194,6 +194,7 @@ async def user_query_stream(query: str):
     )
 
 @app.get("/health")
+@app.head("/health")
 def health_check():
     return {"status": "ok"}
 
